@@ -75,6 +75,14 @@ class CNtLogEventFilter
     }
 }
 
+class INtLogEventFilter
+{
+    [bool] EnumChildCallback([System.Object] $obj)
+    {
+        return $false;
+    }
+}
+
 class CNtLogEvent
 {
     hidden [System.Object]$_NtLogEvent = $null;
@@ -197,7 +205,7 @@ class CNtLogEvent
     {
         if ($this.IsNeedLogProperty())
         {
-            Write-Host $obj.Name, "-->>>",$obj.Value
+            echo $obj.Name, "-->>>",$obj.Value
         }
     }
 
@@ -213,17 +221,17 @@ class CNtLogEvent
 
     [bool]EnumChildProperty([System.Object] $obj)
     {
-        if ($this._EnumChildPropertyCallback)
-        {
-            $this._EnumChildPropertyCallback.Invoke($obj)
-            return $true;
-        }
-
         if ($this.CheckFilter($obj) -eq $false)
         {
             return $false;
         }
-        
+
+        if ($this._EnumChildPropertyCallback)
+        {
+            $this._EnumChildPropertyCallback.Invoke($obj);
+            return $true;
+        }
+
         if ($this.IsNeedLogProperty())
         {
             Write-Host "----------------",$obj.SourceName,"Begin","--------"
@@ -248,18 +256,3 @@ class CNtLogEvent
     }
 
 }
-
-function MainEntry()
-{
-    $Script:ntLogFilter = [CNtLogEventFilter]::new()
-    $Script:ntLogFilter.AddFilter("Type", "´íÎó")
-
-    $Script:myClass = [CNtLogEvent]::new()
-    $Script:myClass.SetQueryLimit(1000)
-    $Script:myClass.SetFilter($Script:ntLogFilter)
-    $Script:myClass.SetLogFile("Application")
-    $Script:myClass.SetNeedLogProperty($true)
-    $Script:nRet = $Script:myClass.EnumChild()
-}
-
-MainEntry
