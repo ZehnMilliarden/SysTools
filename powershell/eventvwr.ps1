@@ -195,15 +195,20 @@ class CNtLogEvent
 
     AnalysisChildPerProperty([System.Object] $obj)
     {
-        if ($this._bNeedLogPropery)
+        if ($this.IsNeedLogProperty())
         {
-            Write-Host "Name:",$obj.Name, "; Value:",$obj.Value
+            Write-Host $obj.Name, "-->>>",$obj.Value
         }
     }
 
     SetNeedLogProperty([bool] $bValue)
     {
         $this._bNeedLogPropery = $bValue
+    }
+
+    [bool]IsNeedLogProperty()
+    {
+        return $this._bNeedLogPropery;
     }
 
     [bool]EnumChildProperty([System.Object] $obj)
@@ -219,6 +224,11 @@ class CNtLogEvent
             return $false;
         }
         
+        if ($this.IsNeedLogProperty())
+        {
+            Write-Host "----------------",$obj.SourceName,"Begin","--------"
+        }
+
         foreach($item1 in $obj.CimInstanceProperties)
         {
             $this.AnalysisChildPerProperty($item1);
@@ -229,6 +239,11 @@ class CNtLogEvent
             $this.AnalysisChildPerProperty($item2);   
         }
 
+        if ($this.IsNeedLogProperty())
+        {
+            Write-Host "----------------",$obj.SourceName,"End","--------"
+        }
+
         return $true;
     }
 
@@ -237,18 +252,14 @@ class CNtLogEvent
 function MainEntry()
 {
     $Script:ntLogFilter = [CNtLogEventFilter]::new()
-    $Script:ntLogFilter.AddFilter("Type", "–≈œ¢")
     $Script:ntLogFilter.AddFilter("Type", "¥ÌŒÛ")
-    # $Script:ntLogFilter.DumpFilter()
 
     $Script:myClass = [CNtLogEvent]::new()
     $Script:myClass.SetQueryLimit(1000)
     $Script:myClass.SetFilter($Script:ntLogFilter)
-    $Script:myClass.SetLogFile("System")
-
-    $Script:nDealCount = $Script:myClass.EnumChild()
-
-    Write-Host "DealChildCount=",$Script:nDealCount
+    $Script:myClass.SetLogFile("Application")
+    $Script:myClass.SetNeedLogProperty($true)
+    $Script:nRet = $Script:myClass.EnumChild()
 }
 
 MainEntry
