@@ -1,4 +1,4 @@
-# windows хуж╬╥жнЖ
+# windows Ф≈╔Е©≈Е┬├Ф·░
 
 class CNtLogEventFilter
 {

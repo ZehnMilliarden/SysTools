@@ -1,11 +1,11 @@
-# Windows ¹¤¾ß
+# Windows å·¥å…·
 
 . "./eventvwr.ps1"
 
 function MainEntry()
 {
     $Script:ntLogFilter = [CNtLogEventFilter]::new()
-    $Script:ntLogFilter.AddFilter("Type", "´íÎó")
+    $Script:ntLogFilter.AddFilter("Type", "é”™è¯¯")
 
     $Script:myClass = [CNtLogEvent]::new()
     $Script:myClass.SetQueryLimit(1000)
